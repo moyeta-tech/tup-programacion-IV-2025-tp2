@@ -6,12 +6,31 @@ conectarDB();
 
 const validarId = param('id').isInt({min:1})
 
+const verificarValidacion=(req, res, next) => {
+    const validacion = validationResult(req)
+    if(!validacion.isEmpty){
+        res.status(400).json({ success: false, message: 'Falla de validación', errores: validacion.array() })
+    }
+    next()
+}
 
+const validarRectangulo = [
+    body('base').isFloat()
+    .notEmpty()
+    .withMessage('No puede estar vacío')
+    .isLength({min: 1, max: 5})
+    .withMessage('No puede tener mas de 5 dígitos'),
+    body('altura').isFloat()
+    .notEmpty()
+    .withMessage('No puede estar vacío')
+    .isLength({min: 1, max: 5})
+    .withMessage('No puede tener mas de 5 dígitos'),
+]
 const app = express();
 const port = process.env.PORT || 3000;
 app.use(express.json()); // Interpretar body como JSON
 
-app.get('/superficies', async (req, res) => {
+app.get('/superficies', verificarValidacion, validarRectangulo, async (req, res) => {
     let sql = 'SELECT * FROM rectangulos'
 
     const [rows] = await db.execute(sql)
@@ -19,10 +38,10 @@ app.get('/superficies', async (req, res) => {
     res.json({ success: true, data: rows })
 })
 
-app.post('/superficies', async (req, res) => {
+app.post('/superficies', verificarValidacion, validarRectangulo, async (req, res) => {
     const { base, altura } = req.body
 
-    const perimetro = 2*(base+altura)
+    const perimetro = 2*(parseFloat(base)+parseFloat(altura))
     const area = base*altura
 
     await db.execute('INSERT INTO rectangulos (base, altura, perimetro, area) VALUES (?, ?, ?, ?)', 
