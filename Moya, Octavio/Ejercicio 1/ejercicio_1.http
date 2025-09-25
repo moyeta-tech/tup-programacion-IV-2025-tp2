@@ -1,0 +1,13 @@
+@url=http://localhost:3000
+
+### Traer perimetros
+GET {{url}}/superficies
+
+### Crear superficies
+POST {{url}}/superficies
+Content-Type: application/json
+
+{
+    "base": 4,
+    "altura": 20
+}
