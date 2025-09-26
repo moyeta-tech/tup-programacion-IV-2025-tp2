@@ -8,6 +8,18 @@ POST {{url}}/superficies
 Content-Type: application/json
 
 {
-    "base": 4,
-    "altura": 20
+    "base": 2,
+    "altura": 2
 }
+
+### Modificar superficie
+PUT {{url}}/superficies/10
+Content-Type: application/json
+
+{
+    "base": 0,
+    "altura":0
+}
+
+### Borrar de la tabla
+DELETE {{url}}/superficies/13
