@@ -1,0 +1,25 @@
+@url=http://localhost:3000
+
+### Traer todas las tareas
+GET {{url}}/tareas
+
+### Crear tareas
+POST {{url}}/tareas
+Content-Type: application/json
+
+{
+    "nombre": "Lavar_platos",
+    "completada": true
+}
+
+### Modificar tarea
+PUT {{url}}/tareas/10
+Content-Type: application/json
+
+{
+    "base": 0,
+    "altura":0
+}
+
+### Borrar tarea de la tabla
+DELETE {{url}}/tareas/13
