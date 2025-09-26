@@ -22,4 +22,4 @@ Content-Type: application/json
 }
 
 ### Borrar tarea de la tabla
-DELETE {{url}}/tareas/13
+DELETE {{url}}/tareas/2
