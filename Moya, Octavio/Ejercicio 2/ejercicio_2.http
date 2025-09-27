@@ -11,18 +11,18 @@ POST {{url}}/tareas
 Content-Type: application/json
 
 {
-    "nombre": "Hacer",
+    "nombre": "Mantenimiento de PC",
     "completada": true
 }
 
 ### Modificar tarea
-PUT {{url}}/tareas/10
+PUT {{url}}/tareas/1
 Content-Type: application/json
 
 {
-    "nombre": "Lavar_platos",
-    "completada": false
+    "nombre": "Lavar platos restaurantes",
+    "completada": true
 }
 
 ### Borrar tarea de la tabla
-DELETE {{url}}/tareas/4
+DELETE {{url}}/tareas/5

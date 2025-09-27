@@ -14,18 +14,17 @@ const verificarValidacion=(req, res, next) => { // Verificamos la validacion con
     next();
 }
 
-const validarRectangulo = [
-    body('nombre').isAlpha('es-ES', {ignore: ' '}).isLength({max: 50}) // De 1 hasta 5 dígitos
+const validarTarea = [
+    body('nombre').isAlpha('es-ES', {ignore: ' '}).isLength({max: 50}) // max 50 caracteres
     .notEmpty()
     .withMessage('No puede estar vacío')
     .withMessage('No puede tener mas de 50 caracteres')
     ,
-    body('altura').isFloat({ min:1, max: 5 }) 
+    body('completada').isBoolean()
+    .withMessage('Este campo tiene que ser un booleano') 
     .notEmpty()
     .withMessage('No puede estar vacío')
-    .withMessage('No puede tener mas de 5 dígitos')
-    .custom(value => value >= 0)
-    .withMessage('No puede ser 0 o negativo')]
+]
 const app = express();
 const port = process.env.PORT || 3000;
 app.use(express.json()); // Interpretar body como JSON
@@ -43,13 +42,13 @@ app.get('/tareas/:id', validarId, verificarValidacion, async (req, res) => {
     const [filas] =await db.execute('SELECT * FROM tareas WHERE id=?', [id])
 
     if(filas.length === 0){
-        return res.status(404).json({ success: false, message: 'No se encontró la tarea' })
+        return res.status(404).json({ success: false, message: 'No hay tareas relacionadas con ese ID' })
     }
 
     res.status(201).json({ success: true, message: 'Tarea obtenida mediante ID', data: filas})
 })
 
-app.post('/tareas', async (req, res) => {
+app.post('/tareas', validarTarea, verificarValidacion, async (req, res) => {
     const { nombre, completada } = req.body
 
    const [rows] = await db.execute('SELECT * FROM tareas WHERE nombre=?', [nombre])
@@ -65,22 +64,30 @@ app.post('/tareas', async (req, res) => {
     res.status(201).json({ success: true, message: 'Se agregó a la tabla tareas correctamente', data: { nombre, completada } })
 })
 
-app.put('/tareas/:id', async (req, res) => {
+app.put('/tareas/:id', validarId, validarTarea, verificarValidacion, async (req, res) => {
     const id = Number(req.params.id)
     const {nombre, completada} = req.body
 
-    const [rows] = await db.execute('SELECT * FROM tareas WHERE nombre=?', [nombre])
+    const [rows] = await db.execute('SELECT * FROM tareas WHERE id=?', [id])
     
+    const [dup] = await db.execute(
+    'SELECT * FROM tareas WHERE nombre=?',
+    [nombre]
+    );
 
-    if(rows.length !== 0){
-        return res.status(404).json({ success: false, message: 'No se encontró la tabla' })
+    if(dup.length > 0) {
+        return res.status(400).json({ success: false, message: 'Ya existe una tarea con ese nombre' })
+    }
+
+    if(rows.length === 0){
+        return res.status(404).json({ success: false, message: 'No se encontró la tarea' })
     }
     await db.execute('UPDATE tareas SET nombre=?, completada=?  WHERE id=?', [nombre, completada, id])
 
     res.status(201).json({ success: true, message: 'Se actualizó la tarea', data: {id, nombre, completada} })
 })
 
-app.delete('/tareas/:id', async (req, res) => {
+app.delete('/tareas/:id', validarId, validarTarea, verificarValidacion, async (req, res) => {
     const id = Number(req.params.id)
 
     await db.execute('DELETE FROM tareas WHERE id=?', [id])
