@@ -3,12 +3,15 @@
 ### Traer todas las tareas
 GET {{url}}/tareas
 
+### Trear tarea con id
+GET {{url}}/tareas/1
+
 ### Crear tareas
 POST {{url}}/tareas
 Content-Type: application/json
 
 {
-    "nombre": "Lavar_platos",
+    "nombre": "Hacer",
     "completada": true
 }
 
@@ -17,9 +20,9 @@ PUT {{url}}/tareas/10
 Content-Type: application/json
 
 {
-    "base": 0,
-    "altura":0
+    "nombre": "Lavar_platos",
+    "completada": false
 }
 
 ### Borrar tarea de la tabla
-DELETE {{url}}/tareas/2
+DELETE {{url}}/tareas/4
