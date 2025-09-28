@@ -1,0 +1,34 @@
+@url=http://localhost:3000
+
+### Traer todas los alumnos
+GET {{url}}/alumnos
+
+### Trear alumno con id
+GET {{url}}/alumnos/4
+
+### Crear alumnos
+POST {{url}}/alumnos
+Content-Type: application/json
+
+{
+    "nombre": "Martin Palermo",
+    "nota_1" : 6,
+    "nota_2" : 7,
+    "nota_3" : 10,
+    "materia_id" : 1 
+}
+
+### Modificar alumno
+PUT {{url}}/alumnos/8
+Content-Type: application/json
+
+{
+    "nombre": "Alfonso Rodriguez",
+    "nota_1" : 5,
+    "nota_2" : 10,
+    "nota_3" : 10,
+    "materia_id" : 1
+}
+
+### Borrar alumno de la tabla
+DELETE {{url}}/alumnos/8

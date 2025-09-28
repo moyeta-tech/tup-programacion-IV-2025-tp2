@@ -1,0 +1,26 @@
+@url=http://localhost:3000
+
+### Traer todas los materias
+GET {{url}}/materias
+
+### Trear alumno con id
+GET {{url}}/materias/3
+
+### Crear materias
+POST {{url}}/materias
+Content-Type: application/json
+
+{
+    "nombre": "Algebra"
+}
+
+### Modificar alumno
+PUT {{url}}/materias/3
+Content-Type: application/json
+
+{
+    "nombre": "Química"
+}
+
+### Borrar alumno de la tabla
+DELETE {{url}}/materias/4
