@@ -32,6 +32,9 @@ app.use(express.json()); // Interpretar body como JSON
 app.get('/tareas', async (req, res) => {
 
     const [fila] = await db.execute('SELECT * FROM tareas')
+    if (fila.length === 0) {
+        return res.status(404).json({ success: false, message: 'No hay alumnos cargados', data: [] });
+    }
 
     res.json({ success: true, message: 'Datos traidos de la tabla tareas correctamente', data: fila })
 })
@@ -53,9 +56,13 @@ app.post('/tareas', validarTarea, verificarValidacion, async (req, res) => {
 
    const [rows] = await db.execute('SELECT * FROM tareas WHERE nombre=?', [nombre])
 
-   if(rows.length !== 0){
+   if(rows.length > 0){
      return res.status(400).json({ success: false, message: 'Ya hay una tarea cargada con ese nombre', data: rows.insertId })
    }
+
+   if(rows.length === 0){
+        return res.status(404).json({ success: false, message: 'No se encontró la tarea' })
+    }
     
     await db.execute('INSERT INTO tareas (nombre, completada) VALUES (?,?)', 
         [nombre, completada]
@@ -89,6 +96,12 @@ app.put('/tareas/:id', validarId, validarTarea, verificarValidacion, async (req,
 
 app.delete('/tareas/:id', validarId, validarTarea, verificarValidacion, async (req, res) => {
     const id = Number(req.params.id)
+
+    const [estaVacio] = await db.execute('SELECT * FROM tareas WHERE id=?', [id])
+    
+        if(estaVacio.length === 0) {
+            return res.status(404).json({ success: false, message: 'No se encontró la tarea', data: estaVacio })
+        }
 
     await db.execute('DELETE FROM tareas WHERE id=?', [id])
 
